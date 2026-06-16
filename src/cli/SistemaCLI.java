@@ -1,6 +1,6 @@
 package cli;
 
-import Excetions.ValidarTrianguloException;
+import Exceptions.ValidarTrianguloException;
 import Interfaces.Figura2D;
 import Interfaces.Figura3D;
 import Modelos.*;

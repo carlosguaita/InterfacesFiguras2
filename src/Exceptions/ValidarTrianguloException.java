@@ -1,4 +1,4 @@
-package Excetions;
+package Exceptions;
 
 public class ValidarTrianguloException extends Exception {
 
