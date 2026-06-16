@@ -1,29 +1,71 @@
-package LogicaNegocio;
+package cli;
 
+import Excetions.ValidarTrianguloException;
 import Interfaces.Figura2D;
 import Interfaces.Figura3D;
 import Modelos.*;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
 public class SistemaCLI {
 
-    private Scanner sc;
+
     private List<Figura> figuras;
 
     public SistemaCLI() {
-        sc = new Scanner(System.in);
         figuras = new ArrayList<>();
     }
+
+    public double validarDouble(){
+        Scanner sc = new Scanner(System.in);
+        double num = 0;
+        boolean flag = true;
+        do {
+            try{
+                num = sc.nextDouble();
+                flag = false;
+            }catch (InputMismatchException ex1){
+                System.out.println("Error: el dato ingresado es incorrecto");
+                System.out.print(">> ");
+            }finally {
+                sc.nextLine();
+            }
+        }while(flag);
+        return num;
+    }
+
+
+    public void validarTriangulo(double ladoA, double ladoB, double ladoC) throws ValidarTrianguloException {
+        double ladoMayor = 0, lado1 = 0, lado2 = 0;
+        if (ladoA >= ladoB && ladoA >= ladoC){
+            ladoMayor = ladoA;
+            lado1 = ladoB;
+            lado2 = ladoC;
+        } else if (ladoB >= ladoA && ladoB >= ladoC) {
+            ladoMayor = ladoB;
+            lado1 = ladoA;
+            lado2 = ladoC;
+        } else if (ladoC >= ladoA && ladoC >= ladoB) {
+            ladoMayor = ladoC;
+            lado1 = ladoA;
+            lado2 = ladoB;
+        }
+        if (ladoMayor >= (lado1 + lado2)){
+            throw new ValidarTrianguloException("Error: No es un triangulo");
+        }
+    }
+
+
 
     public int menu(){
         System.out.println("Seleccione una opcion:");
         System.out.println("1.Crear Figura");
         System.out.println("2.Listar Figuras");
         System.out.print(">> ");
-        int opc = sc.nextInt();
+        int opc = (int)validarDouble();
         return opc;
     }
 
@@ -35,7 +77,7 @@ public class SistemaCLI {
         System.out.println("4.Cilindro");
         System.out.println("5.Cubo");
         System.out.print(">> ");
-        int opc = sc.nextInt();
+        int opc = (int)validarDouble();
         return opc;
     }
 
@@ -44,43 +86,49 @@ public class SistemaCLI {
         switch (opc){
             case 1:
                 System.out.print("Ingrese el radio: ");
-                double radio = sc.nextDouble();
+                double radio = validarDouble();
                 Circulo circulo = new Circulo(radio);
                 figuras.add(circulo);
                 break;
             case 2:
                 System.out.print("Ingrese la base: ");
-                double base = sc.nextDouble();
+                double base = validarDouble();
                 System.out.print("Ingrese la altura: ");
-                double altura = sc.nextDouble();
+                double altura = validarDouble();
                 Rectangulo rectangulo = new Rectangulo(base,altura);
                 figuras.add(rectangulo);
                 break;
             case 3:
-                System.out.print("Ingrese Lado A: ");
-                double ladoA = sc.nextDouble();
-                System.out.print("Ingrese Lado B: ");
-                double ladoB = sc.nextDouble();
-                System.out.print("Ingrese Lado C: ");
-                double ladoC = sc.nextDouble();
-                Triangulo triangulo = new Triangulo(ladoA,ladoB,ladoC);
-                figuras.add(triangulo);
+                try {
+                    System.out.print("Ingrese Lado A: ");
+                    double ladoA = validarDouble();
+                    System.out.print("Ingrese Lado B: ");
+                    double ladoB = validarDouble();
+                    System.out.print("Ingrese Lado C: ");
+                    double ladoC = validarDouble();
+                    validarTriangulo(ladoA,ladoB,ladoC);
+                    Triangulo triangulo = new Triangulo(ladoA,ladoB,ladoC);
+                    figuras.add(triangulo);
+                } catch (ValidarTrianguloException ex){
+                    ex.printStackTrace();
+                }
+
                 break;
             case 4:
                 System.out.print("Ingrese el radio: ");
-                double radioCil = sc.nextDouble();
+                double radioCil = validarDouble();
                 System.out.print("Ingrese la altura: ");
-                double alturaCil = sc.nextDouble();
+                double alturaCil = validarDouble();
                 Cilindro cilindro = new Cilindro(radioCil,alturaCil);
                 figuras.add(cilindro);
                 break;
             case 5:
                 System.out.print("Ingrese la base: ");
-                double baseCu = sc.nextDouble();
+                double baseCu = validarDouble();
                 System.out.print("Ingrese la altura: ");
-                double alturaCu = sc.nextDouble();
+                double alturaCu = validarDouble();
                 System.out.print("Ingrese la profundidad: ");
-                double prof = sc.nextDouble();
+                double prof = validarDouble();
                 Cubo cubo = new Cubo(baseCu,alturaCu,prof);
                 figuras.add(cubo);
                 break;
@@ -123,7 +171,7 @@ public class SistemaCLI {
             }
 
             System.out.println("Desea otra opcion 1.Si/2.No: ");
-            opc2 = sc.nextInt();
+            opc2 = (int)validarDouble();
 
         }while(opc2 == 1);
     }
